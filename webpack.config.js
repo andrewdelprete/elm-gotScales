@@ -23,7 +23,7 @@ module.exports = {
             },
             {
                 test:    /\.elm$/,
-                exclude: [/elm-stuff/, /node_modules/],
+                exclude: [/node_modules/],
                 loader:  'elm-webpack',
             },
             {

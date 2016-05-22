@@ -1,43 +1,57 @@
-module Main where
+port module Main exposing (..)
 
-import Html exposing (div, textarea, text, Html)
-import Html.Attributes exposing (style, placeholder, class, rows)
-import Html.Events exposing (targetValue, on)
-import Signal exposing (Address, message)
-import StartApp.Simple as StartApp
-import String exposing (isEmpty)
+import Html exposing (..)
+import Html.App
 
-import Ishizer exposing (ishizer)
+import GotScales
 
--- MODEL
-type alias Model = String
-modelDefault : Model
-modelDefault = "[ Result Here ]"
-
-model : Model
-model = modelDefault
-
--- UPDATE
-type Action = UpdateText String
-
-update : Action -> Model -> Model
-update action model =
-    case action of
-        UpdateText newStr -> ishizer newStr |>
-            (\newStr ->
-                if isEmpty newStr == True then
-                    modelDefault
-                else
-                    newStr
-            )
-
--- VIEW
-view : Address Action -> Model -> Html
-view address model =
-    div []
-        [ textarea [placeholder "Thish is where you type", rows 5, on "input" targetValue (\str -> message address (UpdateText str))] []
-        , div [ class "Ishizer__result tac" ] [ text model ]
-        ]
+-- MAIN
 
 main =
-    StartApp.start { model = model , update = update, view = view }
+  Html.App.program
+    { init = init
+    , view = view
+    , update = update
+    , subscriptions = subscriptions
+    }
+
+-- MODEL
+
+type alias Model = GotScales.Model
+
+-- UPDATE
+
+type Msg
+    = GotScalesMsg GotScales.Msg
+
+init : (Model, Cmd Msg)
+init =
+    let
+        (newModel, cmd) = (GotScales.init GotScales.initialModel)
+    in
+        (newModel, Cmd.map GotScalesMsg cmd)
+
+update : Msg -> Model -> (Model, Cmd Msg)
+update message model =
+    case message of
+        GotScalesMsg subMsg ->
+            let
+                -- Destructure the response from GotScales.update
+                -- return (Model, Cmd Msg).
+                (updatedModel, cmd) = GotScales.update subMsg model
+            in
+                -- Then update the cmd returned from GotScales.update
+                -- to have be tagged GotScalesMsg.
+                (updatedModel, Cmd.map GotScalesMsg cmd)
+
+-- VIEW
+
+view : Model -> Html Msg
+view model = Html.App.map GotScalesMsg (GotScales.view model)
+
+-- SUBSCRIPTIONS
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.batch
+        [ Sub.map GotScalesMsg (GotScales.subscriptions model) ]
