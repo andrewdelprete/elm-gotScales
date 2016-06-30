@@ -17,6 +17,10 @@ module.exports = {
                 loader: 'style-loader!css-loader?sourceMap!sass-loader?sourceMap'
             },
             {
+                test: /\.js$/,
+                loader: 'babel'
+            },
+            {
                 test:    /\.html$/,
                 exclude: /node_modules/,
                 loader:  'file?name=[name].[ext]',

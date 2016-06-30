@@ -1,5 +1,5 @@
 'use strict';
-const gotScales = require('got-scales').default
+var gotScales = require('got-scales').default
 
 // SASS
 require('./styles/screen.scss');

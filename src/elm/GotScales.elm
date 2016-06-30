@@ -41,7 +41,6 @@ main =
         , subscriptions = subscriptions
         }
 
-
 -- MODEL
 
 initialModel =

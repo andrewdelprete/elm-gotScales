@@ -3,3 +3,4 @@ elm-stuff
 dist
 node_modules
 CNAME
+npm-debug.log
